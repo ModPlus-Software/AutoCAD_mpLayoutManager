@@ -125,7 +125,9 @@
         [CommandMethod("ModPlus", "mpLayoutManager", CommandFlags.Modal)]
         public void Start()
         {
+#if !Debug
             Statistic.SendCommandStarting(new ModPlusConnector());
+#endif
             try
             {
                 if (!(!bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "AddToMpPalette"), out bool b) | b))
@@ -147,7 +149,7 @@
                             Dock = DockStyle.Fill,
                             Child = lmPalette
                         };
-                        _paletteSet.Add("MP:"+ Language.GetItem(LangItem, "h8"), elementHost);
+                        _paletteSet.Add("MP:" + Language.GetItem(LangItem, "h8"), elementHost);
                         _paletteSet.Style = PaletteSetStyles.ShowCloseButton | PaletteSetStyles.ShowPropertiesMenu | PaletteSetStyles.ShowAutoHideButton;
                         _paletteSet.MinimumSize = new Size(100, 300);
                         _paletteSet.DockEnabled = DockSides.Right | DockSides.Left;

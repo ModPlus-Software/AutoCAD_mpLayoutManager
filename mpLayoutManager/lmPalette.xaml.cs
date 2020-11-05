@@ -1,8 +1,6 @@
 ﻿namespace mpLayoutManager
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
@@ -37,18 +35,18 @@
         {
             try
             {
-                Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
                 if (mdiActiveDocument != null)
                 {
-                    int newIndex = e.NewIndex;
-                    int oldIndex = e.OldIndex;
+                    var newIndex = e.NewIndex;
+                    var oldIndex = e.OldIndex;
                     if (e.ItemsSource[oldIndex] != null && e.ItemsSource[newIndex] != null)
                     {
                         if (!_showModel)
                         {
                             e.ItemsSource.Move(oldIndex, newIndex);
-                            int num = 1;
-                            foreach (LayoutForBinding itemsSource in e.ItemsSource)
+                            var num = 1;
+                            foreach (var itemsSource in e.ItemsSource)
                             {
                                 itemsSource.TabOrder = num;
                                 num++;
@@ -57,8 +55,8 @@
                         else if (!(oldIndex == 0 | newIndex == -1 | newIndex == 0))
                         {
                             e.ItemsSource.Move(oldIndex, newIndex);
-                            int num1 = 0;
-                            foreach (LayoutForBinding layoutForBinding in e.ItemsSource)
+                            var num1 = 0;
+                            foreach (var layoutForBinding in e.ItemsSource)
                             {
                                 layoutForBinding.TabOrder = num1;
                                 num1++;
@@ -71,13 +69,13 @@
 
                         using (mdiActiveDocument.LockDocument())
                         {
-                            using (Transaction transaction = mdiActiveDocument.Database.TransactionManager.StartTransaction())
+                            using (var transaction = mdiActiveDocument.Database.TransactionManager.StartTransaction())
                             {
-                                LayoutManager current = LayoutManager.Current;
-                                foreach (LayoutForBinding itemsSource1 in e.ItemsSource)
+                                var current = LayoutManager.Current;
+                                foreach (var itemsSource1 in e.ItemsSource)
                                 {
-                                    ObjectId layoutId = current.GetLayoutId(itemsSource1.LayoutName);
-                                    Layout obj = transaction.GetObject(layoutId, OpenMode.ForWrite) as Layout;
+                                    var layoutId = current.GetLayoutId(itemsSource1.LayoutName);
+                                    var obj = transaction.GetObject(layoutId, OpenMode.ForWrite) as Layout;
                                     if (obj != null)
                                     {
                                         obj.TabOrder = itemsSource1.TabOrder;
@@ -105,10 +103,10 @@
             try
             {
                 LvLayouts.ItemsSource = null;
-                string currentLayoutName = GetCurrentLayoutName();
+                var currentLayoutName = GetCurrentLayoutName();
                 if (!string.IsNullOrEmpty(currentLayoutName))
                 {
-                    foreach (LayoutForBinding currentDocLayout in _currentDocLayouts)
+                    foreach (var currentDocLayout in _currentDocLayouts)
                     {
                         currentDocLayout.TabSelected = currentDocLayout.LayoutName.Equals(currentLayoutName);
                     }
@@ -126,30 +124,30 @@
         {
             try
             {
-                Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
                 var database = mdiActiveDocument != null ? mdiActiveDocument.Database : null;
                 if (database != null)
                 {
                     bool flag;
-                    bool flag1 = !bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "AskLayoutName"), out flag) | flag;
-                    LayoutManager current = LayoutManager.Current;
+                    var flag1 = !bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "AskLayoutName"), out flag) | flag;
+                    var current = LayoutManager.Current;
                     if (!flag1)
                     {
-                        string str1 = string.Concat(ModPlusAPI.Language.GetItem(LangItem, "h3"), GetNewLayoutNumber(current));
+                        var str1 = string.Concat(ModPlusAPI.Language.GetItem(LangItem, "h3"), GetNewLayoutNumber(current));
                         using (mdiActiveDocument.LockDocument())
                         {
-                            using (Transaction transaction = mdiActiveDocument.TransactionManager.StartTransaction())
+                            using (var transaction = mdiActiveDocument.TransactionManager.StartTransaction())
                             {
-                                ObjectId objectId = current.CreateLayout(str1);
+                                var objectId = current.CreateLayout(str1);
                                 if (bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "OpenNewLayout"), out flag) & flag)
                                 {
-                                    Layout obj = transaction.GetObject(objectId, OpenMode.ForWrite) as Layout;
+                                    var obj = transaction.GetObject(objectId, OpenMode.ForWrite) as Layout;
                                     if (obj != null)
                                     {
                                         obj.Initialize();
                                     }
 
-                                    LayoutManager layoutManager = current;
+                                    var layoutManager = current;
                                     string layoutName;
                                     if (obj != null)
                                     {
@@ -173,7 +171,7 @@
                     }
                     else
                     {
-                        LayoutNewName layoutNewName = new LayoutNewName
+                        var layoutNewName = new LayoutNewName
                         {
                             LayoutsNames = (
                                 from layout in _currentDocLayouts
@@ -186,24 +184,24 @@
                             },
                             Topmost = true
                         };
-                        LayoutNewName layoutNewName1 = layoutNewName;
-                        bool? nullable = layoutNewName1.ShowDialog();
+                        var layoutNewName1 = layoutNewName;
+                        var nullable = layoutNewName1.ShowDialog();
                         if (nullable.GetValueOrDefault() && nullable.HasValue)
                         {
                             using (mdiActiveDocument.LockDocument())
                             {
-                                using (Transaction transaction1 = mdiActiveDocument.TransactionManager.StartTransaction())
+                                using (var transaction1 = mdiActiveDocument.TransactionManager.StartTransaction())
                                 {
-                                    ObjectId objectId1 = current.CreateLayout(layoutNewName1.TbNewName.Text);
+                                    var objectId1 = current.CreateLayout(layoutNewName1.TbNewName.Text);
                                     if (bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "OpenNewLayout"), out flag) & flag)
                                     {
-                                        Layout obj1 = transaction1.GetObject(objectId1, OpenMode.ForWrite) as Layout;
+                                        var obj1 = transaction1.GetObject(objectId1, OpenMode.ForWrite) as Layout;
                                         if (obj1 != null)
                                         {
                                             obj1.Initialize();
                                         }
 
-                                        LayoutManager layoutManager1 = current;
+                                        var layoutManager1 = current;
                                         var str = obj1 != null ? obj1.LayoutName : null;
                                         layoutManager1.CurrentLayout = str;
                                         database.TileMode = false;
@@ -242,7 +240,7 @@
 
         private string GetCopyLayoutName(LayoutForBinding selectedLayout, int copyCount)
         {
-            int num = 1 + _currentDocLayouts.Count(currentDocLayout => currentDocLayout.LayoutName.Contains(selectedLayout.LayoutName)) + copyCount;
+            var num = 1 + _currentDocLayouts.Count(currentDocLayout => currentDocLayout.LayoutName.Contains(selectedLayout.LayoutName)) + copyCount;
             return string.Concat(selectedLayout.LayoutName, " (", num, ")");
         }
 
@@ -250,7 +248,7 @@
         {
             try
             {
-                Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
                 Database database;
                 if (mdiActiveDocument != null)
                 {
@@ -261,22 +259,22 @@
                     database = null;
                 }
 
-                Database database1 = database;
+                var database1 = database;
                 if (!((database1 == null) | (mdiActiveDocument == null)))
                 {
                     _currentDocLayouts = new ObservableCollection<LayoutForBinding>();
-                    using (Transaction transaction = database1.TransactionManager.StartTransaction())
+                    using (var transaction = database1.TransactionManager.StartTransaction())
                     {
-                        LayoutManager current = LayoutManager.Current;
-                        DBDictionary obj = transaction.GetObject(database1.LayoutDictionaryId, OpenMode.ForRead, false) as DBDictionary;
+                        var current = LayoutManager.Current;
+                        var obj = transaction.GetObject(database1.LayoutDictionaryId, OpenMode.ForRead, false) as DBDictionary;
                         if (obj != null)
                         {
-                            foreach (DBDictionaryEntry dBDictionaryEntry in obj)
+                            foreach (var dBDictionaryEntry in obj)
                             {
-                                Layout layout = transaction.GetObject(dBDictionaryEntry.Value, OpenMode.ForRead) as Layout;
+                                var layout = transaction.GetObject(dBDictionaryEntry.Value, OpenMode.ForRead) as Layout;
                                 if (layout != null)
                                 {
-                                    LayoutForBinding layoutForBinding = new LayoutForBinding()
+                                    var layoutForBinding = new LayoutForBinding()
                                     {
                                         LayoutName = layout.LayoutName,
                                         ModelType = layout.ModelType,
@@ -331,12 +329,12 @@
 
         private int GetNewLayoutNumber(LayoutManager lm)
         {
-            int layoutCount = lm.LayoutCount;
-            bool flag = true;
+            var layoutCount = lm.LayoutCount;
+            var flag = true;
             while (flag)
             {
-                bool flag1 = false;
-                foreach (LayoutForBinding currentDocLayout in _currentDocLayouts)
+                var flag1 = false;
+                foreach (var currentDocLayout in _currentDocLayouts)
                 {
                     if (currentDocLayout.LayoutName.Equals(string.Concat("Лист", layoutCount)))
                     {
@@ -363,9 +361,9 @@
             {
                 if (sender is ContextMenu contextMenu)
                 {
-                    ListViewItem placementTarget = contextMenu.PlacementTarget as ListViewItem;
-                    LayoutManager current = LayoutManager.Current;
-                    foreach (object item in contextMenu.Items)
+                    var placementTarget = contextMenu.PlacementTarget as ListViewItem;
+                    var current = LayoutManager.Current;
+                    foreach (var item in contextMenu.Items)
                     {
                         if (item is MenuItem menuItem)
                         {
@@ -473,7 +471,7 @@
         {
             try
             {
-                _showModel = !bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "ShowModel"), out bool flag) | flag;
+                _showModel = !bool.TryParse(UserConfigFile.GetValue("mpLayoutManager", "ShowModel"), out var flag) | flag;
                 _dragMgr = new ListViewDragDropManager<LayoutForBinding>(LvLayouts)
                 {
                     DragAdornerOpacity = 1
@@ -481,7 +479,7 @@
                 _dragMgr.ProcessDrop += _dragMgr_ProcessDrop;
                 LvLayouts.DragEnter += LvLayouts_DragEnter;
                 GetCurrentDocLayouts();
-                LayoutManager current = LayoutManager.Current;
+                var current = LayoutManager.Current;
                 current.LayoutCreated += Lm_LayoutCreated;
                 current.LayoutRenamed += Lm_LayoutRenamed;
                 current.LayoutRemoved += Lm_LayoutRemoved;
@@ -499,7 +497,7 @@
 
         private void LmSettings_OnClick(object sender, RoutedEventArgs e)
         {
-            LmSettings lmSetting = new LmSettings()
+            var lmSetting = new LmSettings()
             {
                 Topmost = true
             };
@@ -531,7 +529,7 @@
         {
             if (e != null & LvLayouts != null)
             {
-                ListViewDragDropManager<LayoutForBinding> listViewDragDropManager = _dragMgr;
+                var listViewDragDropManager = _dragMgr;
                 ListView lvLayouts;
                 if (e.AddedItems.Count > 1)
                 {
@@ -550,7 +548,7 @@
         {
             try
             {
-                Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
                 if (LvLayouts.SelectedItems.Count == 1)
                 {
                     if (LvLayouts.SelectedItem is LayoutForBinding selectedItem &&
@@ -572,7 +570,7 @@
                 {
                     if (ModPlusAPI.Windows.MessageBox.ShowYesNo(ModPlusAPI.Language.GetItem(LangItem, "h5"), MessageBoxIcon.Question))
                     {
-                        List<LayoutForBinding> list = (
+                        var list = (
                             from selectedLayout in LvLayouts.SelectedItems.OfType<LayoutForBinding>()
                             where !selectedLayout.ModelType
                             select selectedLayout).ToList();
@@ -580,7 +578,7 @@
                         {
                             using (mdiActiveDocument.LockDocument())
                             {
-                                foreach (LayoutForBinding layoutForBinding in list)
+                                foreach (var layoutForBinding in list)
                                 {
                                     LayoutManager.Current.DeleteLayout(layoutForBinding.LayoutName);
                                     _currentDocLayouts.Remove(layoutForBinding);
@@ -608,14 +606,14 @@
         {
             try
             {
-                Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
                 if (LvLayouts.SelectedItems.Count <= 1)
                 {
                     if (LvLayouts.SelectedItem is LayoutForBinding selectedItem)
                     {
                         if (!selectedItem.ModelType)
                         {
-                            RenameLayout renameLayout = new RenameLayout
+                            var renameLayout = new RenameLayout
                             {
                                 LayoutsNames = (
                                     from layout in _currentDocLayouts
@@ -624,17 +622,17 @@
                                 TbNewName = { Text = selectedItem.LayoutName },
                                 Topmost = true
                             };
-                            RenameLayout renameLayout1 = renameLayout;
-                            bool? nullable = renameLayout1.ShowDialog();
+                            var renameLayout1 = renameLayout;
+                            var nullable = renameLayout1.ShowDialog();
                             if (nullable.GetValueOrDefault() && nullable.HasValue)
                             {
                                 if (renameLayout1.TbNewName.Text != renameLayout1.TbCurrentName.Text)
                                 {
-                                    using (Transaction transaction = mdiActiveDocument.TransactionManager.StartTransaction())
+                                    using (var transaction = mdiActiveDocument.TransactionManager.StartTransaction())
                                     {
                                         using (mdiActiveDocument.LockDocument())
                                         {
-                                            LayoutManager current = LayoutManager.Current;
+                                            var current = LayoutManager.Current;
                                             current.RenameLayout(renameLayout1.TbCurrentName.Text, renameLayout1.TbNewName.Text);
                                             GetCurrentDocLayouts();
                                         }
@@ -671,24 +669,24 @@
         {
             try
             {
-                Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
-                LayoutManager current = LayoutManager.Current;
-                IList selectedItems = LvLayouts.SelectedItems;
+                var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                var current = LayoutManager.Current;
+                var selectedItems = LvLayouts.SelectedItems;
                 if (selectedItems != null)
                 {
                     if (selectedItems.Count != 0)
                     {
                         if (!selectedItems.Cast<object>().Any(selectedItem =>
                         {
-                            LayoutForBinding layoutForBinding = selectedItem as LayoutForBinding;
+                            var layoutForBinding = selectedItem as LayoutForBinding;
                             return layoutForBinding?.ModelType ?? false;
                         }))
                         {
-                            MoveCopyLayout moveCopyLayout = new MoveCopyLayout()
+                            var moveCopyLayout = new MoveCopyLayout()
                             {
                                 Topmost = true
                             };
-                            bool? isChecked = moveCopyLayout.ShowDialog();
+                            var isChecked = moveCopyLayout.ShowDialog();
                             if (isChecked.GetValueOrDefault() && isChecked.HasValue)
                             {
                                 isChecked = moveCopyLayout.ChkMakeCopy.IsChecked;
@@ -707,10 +705,10 @@
                                 {
                                     if (moveCopyLayout.SelectedLayoutTabOrder != -1)
                                     {
-                                        int num = _currentDocLayouts.IndexOf(_currentDocLayouts.Single(x => x.LayoutName.Equals(moveCopyLayout.SelectedLayoutName)));
-                                        for (int i = selectedItems.Count - 1; i >= 0; i--)
+                                        var num = _currentDocLayouts.IndexOf(_currentDocLayouts.Single(x => x.LayoutName.Equals(moveCopyLayout.SelectedLayoutName)));
+                                        for (var i = selectedItems.Count - 1; i >= 0; i--)
                                         {
-                                            LayoutForBinding item = selectedItems[i] as LayoutForBinding;
+                                            var item = selectedItems[i] as LayoutForBinding;
                                             _currentDocLayouts.Move(_currentDocLayouts.IndexOf(item), num);
                                         }
 
@@ -728,14 +726,14 @@
                                 }
                                 else if (moveCopyLayout.SelectedLayoutTabOrder != -1)
                                 {
-                                    int num1 = _currentDocLayouts.IndexOf(_currentDocLayouts.Single(x => x.LayoutName.Equals(moveCopyLayout.SelectedLayoutName)));
+                                    var num1 = _currentDocLayouts.IndexOf(_currentDocLayouts.Single(x => x.LayoutName.Equals(moveCopyLayout.SelectedLayoutName)));
                                     current.LayoutCreated -= Lm_LayoutCreated;
                                     current.LayoutCopied -= Lm_LayoutCopied;
                                     using (mdiActiveDocument.LockDocument())
                                     {
-                                        for (int j = selectedItems.Count - 1; j >= 0; j--)
+                                        for (var j = selectedItems.Count - 1; j >= 0; j--)
                                         {
-                                            for (int i = 0; i < moveCopyLayout.NuCopyCount.Value; i++)
+                                            for (var i = 0; i < moveCopyLayout.NuCopyCount.Value; i++)
                                             {
                                                 if (selectedItems[j] is LayoutForBinding selectedLayout)
                                                 {
@@ -765,7 +763,7 @@
                                     {
                                         foreach (LayoutForBinding layoutForBinding2 in selectedItems)
                                         {
-                                            for (int i = 0; i < moveCopyLayout.NuCopyCount.Value; i++)
+                                            for (var i = 0; i < moveCopyLayout.NuCopyCount.Value; i++)
                                             {
                                                 current.CloneLayout(layoutForBinding2.LayoutName, GetCopyLayoutName(layoutForBinding2, i), current.LayoutCount + i);
                                             }
@@ -809,10 +807,9 @@
                 }
                 else
                 {
-                    for (int i = 0; i < LvLayouts.Items.Count; i++)
+                    for (var i = 0; i < LvLayouts.Items.Count; i++)
                     {
-                        ListViewItem listViewItem = LvLayouts.ItemContainerGenerator.ContainerFromIndex(i) as ListViewItem;
-                        if (listViewItem != null)
+                        if (LvLayouts.ItemContainerGenerator.ContainerFromIndex(i) is ListViewItem listViewItem)
                         {
                             listViewItem.IsSelected = i != 0;
                         }
@@ -827,12 +824,12 @@
 
         private void OpenSelectedLayout()
         {
-            LayoutManager current = LayoutManager.Current;
+            var current = LayoutManager.Current;
             try
             {
                 try
                 {
-                    Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+                    var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
                     if (LvLayouts.SelectedItems.Count <= 1)
                     {
                         current.LayoutSwitched -= Lm_LayoutSwitched;
@@ -867,24 +864,24 @@
 
         private void SetNewTabOrderByListPositions()
         {
-            Document mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
+            var mdiActiveDocument = AcApp.DocumentManager.MdiActiveDocument;
             if (mdiActiveDocument != null)
             {
                 using (mdiActiveDocument.LockDocument())
                 {
-                    using (Transaction transaction = mdiActiveDocument.Database.TransactionManager.StartTransaction())
+                    using (var transaction = mdiActiveDocument.Database.TransactionManager.StartTransaction())
                     {
-                        LayoutManager current = LayoutManager.Current;
-                        int num = 0;
+                        var current = LayoutManager.Current;
+                        var num = 0;
                         if (!_showModel)
                         {
                             num = 1;
                         }
 
-                        foreach (LayoutForBinding currentDocLayout in _currentDocLayouts)
+                        foreach (var currentDocLayout in _currentDocLayouts)
                         {
-                            ObjectId layoutId = current.GetLayoutId(currentDocLayout.LayoutName);
-                            Layout obj = transaction.GetObject(layoutId, OpenMode.ForWrite) as Layout;
+                            var layoutId = current.GetLayoutId(currentDocLayout.LayoutName);
+                            var obj = transaction.GetObject(layoutId, OpenMode.ForWrite) as Layout;
                             if (obj != null)
                             {
                                 obj.TabOrder = num;
